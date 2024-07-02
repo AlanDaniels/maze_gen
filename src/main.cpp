@@ -2,19 +2,7 @@
 #include "CImg.h"
 
 
-// TODO: Why doesn't autocomplete after a dot work?
-// TODO: Why doesn't the "execute" launcher work?
-
-
 using namespace cimg_library;
-
-
-class CanYouSeeMe
-{
-public:
-    int one;
-    int two;
-};
 
 
 int main()
