@@ -71,7 +71,6 @@ Coord calc_offset(int w, int h)
     int x = ((CELL_SIZE_PIX + (CELL_BORDER_PIX - 1)) * w) + OUTER_BORDER_PIX;
     int y = ((CELL_SIZE_PIX + (CELL_BORDER_PIX - 1)) * h) + OUTER_BORDER_PIX;
     return Coord(x, y);
-    return Coord(x, y);
 }
 
 
