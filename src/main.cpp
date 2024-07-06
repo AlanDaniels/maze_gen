@@ -6,12 +6,9 @@
 #include "CImg.h"
 
 
-using namespace cimg_library;
-
-
 // Constants.
-constexpr int GRID_WIDTH = 15;
-constexpr int GRID_HEIGHT = 10;
+constexpr int GRID_WIDTH = 20;
+constexpr int GRID_HEIGHT = 15;
 constexpr int CELL_SIZE_PIX = 50;
 constexpr int CELL_BORDER_PIX = 10;
 constexpr int OUTER_BORDER_PIX = 25;
@@ -79,16 +76,17 @@ Coord calc_offset(int w, int h)
 
 // Testing out connections.
 std::vector<Connection> connections = {
-    Connection(5, 2, 5, 3),
-    Connection(5, 2, 4, 2)
+    {5, 2, 5, 3},
+    {5, 2, 4, 2},
+    {5, 3, 5, 4}
 };
 
 
 // And away we go.
 int main()
 {
-    CImg<uint8_t> image(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_DEPTH, NUM_CHANNELS, INITIAL_VALUE);
-    CImgDisplay display(image, "Maze Generating");
+    cimg_library::CImg<uint8_t> image(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_DEPTH, NUM_CHANNELS, INITIAL_VALUE);
+    cimg_library::CImgDisplay display(image, "Maze Generating");
 
     // Draw the maze cells.
     for (int w = 0; w < GRID_WIDTH; w++) {
