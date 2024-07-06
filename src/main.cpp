@@ -71,6 +71,7 @@ Coord calc_offset(int w, int h)
     int x = ((CELL_SIZE_PIX + (CELL_BORDER_PIX - 1)) * w) + OUTER_BORDER_PIX;
     int y = ((CELL_SIZE_PIX + (CELL_BORDER_PIX - 1)) * h) + OUTER_BORDER_PIX;
     return Coord(x, y);
+    return Coord(x, y);
 }
 
 
@@ -89,12 +90,28 @@ int main()
     cimg_library::CImgDisplay display(image, "Maze Generating");
 
     // Draw the maze cells.
+    // Draw the maze cells.
     for (int w = 0; w < GRID_WIDTH; w++) {
         for (int h = 0; h < GRID_HEIGHT; h++) {
             Coord coord = calc_offset(w, h);
             uint8_t gray[] = { 0x80, 0x80, 0x80 };
             image.draw_rectangle(coord.m_x, coord.m_y, coord.m_x + CELL_SIZE_PIX, coord.m_y + CELL_SIZE_PIX, gray);
         }
+    }
+
+    // Draw the connections.
+    for (auto conn : connections) {
+        Coord begin_coord = calc_offset(conn.m_begin_w, conn.m_begin_h);
+        Coord end_coord = calc_offset(conn.m_end_w, conn.m_end_h);
+
+        int min_x = std::min(begin_coord.m_x, end_coord.m_x) + SQUISH_PIX;
+        int max_x = std::max(begin_coord.m_x, end_coord.m_x) + CELL_SIZE_PIX - SQUISH_PIX;
+        int min_y = std::min(begin_coord.m_y, end_coord.m_y) + SQUISH_PIX;
+        int max_y = std::max(begin_coord.m_y, end_coord.m_y) + CELL_SIZE_PIX - SQUISH_PIX;
+
+        printf("%d, %d, %d, %d\n", min_x, max_x, min_y, max_y);
+        uint8_t white[] = { 0xFF, 0xFF, 0xFF };
+        image.draw_rectangle( min_x, min_y, max_x, max_y, white);
     }
 
     // Draw the connections.
