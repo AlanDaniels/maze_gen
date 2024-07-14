@@ -1,13 +1,18 @@
 #ifndef __COMMON_HPP__
 #define __COMMON_HPP__
 
+#include <cstdio>
+#include <cstdint>
+#include <map>
 #include <vector>
 #include <cassert>
 #include <algorithm>
 
+#include "CImg.h"
+
 
 // Constants.
-constexpr int GRID_WIDTH = 20;
+constexpr int GRID_WIDTH = 21;
 constexpr int GRID_HEIGHT = 15;
 constexpr int CELL_SIZE_PIX = 50;
 constexpr int CELL_BORDER_PIX = 10;
@@ -36,23 +41,43 @@ struct ScreenCoord
 
 
 // An individual cell in the maze.
-struct MazeCell
+struct Cell
 {
-    MazeCell(): w(0), h(0), occupied(false) {}
-    MazeCell(int pw, int ph) : w(pw), h(ph), occupied(false) {}
-    MazeCell(const MazeCell &that): w(that.w), h(that.h), occupied(that.occupied) {}
+    Cell(): w(0), h(0) {}
+    Cell(int pw, int ph) : w(pw), h(ph) {}
+    Cell(const Cell &that): w(that.w), h(that.h) {}
+    
+    // Assignment operator.
+    Cell& operator=(const Cell &that)
+    {
+        if (this != &that) {
+            w = that.w;
+            h = that.h;
+        }
+        return *this;
+    }
+
+    // Needed for set hashing. Note the need for "const" here!
+    bool operator<(const Cell &that) const
+    {
+        if      (w < that.w) return true;
+        else if (w > that.w) return false;
+        else if (h < that.h) return true;
+        else if (h > that.h) return false;
+        else return false; // Must be equal.
+    }
+
     int w;
     int h;
-    bool occupied;
 };
 
 
 // A connection between two adjacent maze cells.
-struct MazeConnection
+struct Connection
 {
-    MazeConnection(): begin(0, 0), end(0, 0) {}
+    Connection(): begin(0, 0), end(0, 0) {}
 
-    MazeConnection(const MazeCell& pbegin, const MazeCell &pend) :
+    Connection(const Cell& pbegin, const Cell &pend) :
         begin(pbegin), end(pend)
     {
         // Bounds check.
@@ -65,12 +90,12 @@ struct MazeConnection
         assert((abs(begin.w - end.w) + abs(begin.h - end.h)) == 1);
     }
 
-    MazeConnection(const MazeConnection &that) :
+    Connection(const Connection &that) :
         begin(that.begin), end(that.end)
     {}
 
-    MazeCell begin;
-    MazeCell end;
+    Cell begin;
+    Cell end;
 };
 
 
@@ -78,8 +103,9 @@ struct MazeConnection
 class IMazeStrategy
 {
     virtual void nextStep() = 0;
-    virtual const MazeCell &getCurrentCell() = 0;
-    virtual const std::vector<MazeConnection> &getConnections() = 0;
+    virtual const Cell& getCurrentCell() = 0;
+    virtual const std::map<Cell, bool>& getCells() = 0;
+    virtual const std::vector<Connection>& getConnections() = 0;
 };
 
 #endif

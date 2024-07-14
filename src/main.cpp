@@ -1,7 +1,3 @@
-#include <cstdio>
-#include <cstdint>
-
-#include "CImg.h"
 #include "common.hpp"
 #include "random_strat.hpp"
 
@@ -15,14 +11,6 @@ ScreenCoord calc_offset(int w, int h)
 }
 
 
-// Testing out connections.
-std::vector<MazeConnection> connections = {
-    {{5, 2}, {5, 3}},
-    {{5, 2}, {4, 2}},
-    {{5, 3}, {5, 4}}
-};
-
-
 // And away we go.
 int main()
 {
@@ -32,24 +20,23 @@ int main()
     RandomStrategy strategy;
 
     // Draw the maze cells.
-    for (int w = 0; w < GRID_WIDTH; w++) {
-        for (int h = 0; h < GRID_HEIGHT; h++) {
-            ScreenCoord coord = calc_offset(w, h);
-            uint8_t gray[] = { 0x80, 0x80, 0x80 };
-            image.draw_rectangle(coord.x, coord.y, coord.x + CELL_SIZE_PIX, coord.y + CELL_SIZE_PIX, gray);
-        }
+    auto cells = strategy.getCells();
+    for (auto it = cells.begin(); it != cells.end(); it++) {
+        ScreenCoord coord = calc_offset(it->first.w, it->first.h);
+        uint8_t gray[] = { 0x80, 0x80, 0x80 };
+        image.draw_rectangle(coord.x, coord.y, coord.x + CELL_SIZE_PIX, coord.y + CELL_SIZE_PIX, gray);
     }
 
-    // Draw the cell where the strategy is. A bit of overdraw, but that's okay.
+    // Draw the cell where the strategy is currently at. A bit of overdraw, but that's okay.
     {
-        const MazeCell& current = strategy.getCurrentCell();
+        auto current = strategy.getCurrentCell();
         ScreenCoord coord = calc_offset(current.w, current.h);
         uint8_t red[] = { 0xFF, 0, 0 };
         image.draw_rectangle(coord.x, coord.y, coord.x + CELL_SIZE_PIX, coord.y + CELL_SIZE_PIX, red);
     }
 
     // Draw the connections.
-    for (auto conn : connections) {
+    for (auto conn : strategy.getConnections()) {
         ScreenCoord begin_coord = calc_offset(conn.begin.w, conn.begin.h);
         ScreenCoord end_coord = calc_offset(conn.end.w, conn.end.h);
 

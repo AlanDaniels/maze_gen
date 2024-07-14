@@ -10,10 +10,20 @@ public:
     ~RandomStrategy() {}
 
     void nextStep();
-    const MazeCell &getCurrentCell();
-    const std::vector<MazeConnection> &getConnections();
+    const Cell &getCurrentCell();
+
+    const std::map<Cell, bool>& getCells() {
+        return m_occupied;
+    }
+
+    const std::vector<Connection>& getConnections() {
+        return m_connections;
+    }
 
 private:
-    MazeCell m_current_cell;
-    std::vector<MazeConnection> m_connections;
+    Cell m_current_cell;
+    Cell m_end_goal_cell;
+
+    std::map<Cell, bool> m_occupied;
+    std::vector<Connection> m_connections;
 };
