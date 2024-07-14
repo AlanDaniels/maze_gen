@@ -19,10 +19,18 @@ RandomStrategy::RandomStrategy()
 }
 
 
-// Nothing for now.
+// A bit of junk code, just to see if the steps work.
+// TODO: Actually do the random walk.
+// TODO: Turn the connections into a SET, and check against duplicates.
 void RandomStrategy::nextStep()
 {
+    if (m_current_cell.h < (GRID_HEIGHT - 1)) {
+        Cell old = m_current_cell;
+        m_current_cell.h++;
+        m_connections.emplace_back(old, m_current_cell);
 
+        m_occupied[m_current_cell] = true;
+    }
 }
 
 
