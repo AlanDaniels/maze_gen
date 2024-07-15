@@ -16,20 +16,54 @@ RandomStrategy::RandomStrategy()
         }
     }
     m_occupied[m_current_cell] = true;
+    m_walk_stack.emplace_back(m_current_cell);
 }
 
 
 // A bit of junk code, just to see if the steps work.
 // TODO: Actually do the random walk.
-// TODO: Turn the connections into a SET, and check against duplicates.
 void RandomStrategy::nextStep()
 {
-    if (m_current_cell.h < (GRID_HEIGHT - 1)) {
-        Cell old = m_current_cell;
-        m_current_cell.h++;
-        m_connections.emplace_back(old, m_current_cell);
+    // Find our possible neighbors.
+    std::vector<Cell> neighbors;
+    int h = m_current_cell.h;
+    int w = m_current_cell.w;
 
-        m_occupied[m_current_cell] = true;
+    if (h > 0) {
+        Cell north(w, h - 1);
+        if (!m_occupied[north]) {
+            neighbors.emplace_back(north);
+        };
+    }
+    if (h < (GRID_HEIGHT - 1)) {
+        Cell south(w, h + 1);
+        if (!m_occupied[south]) {
+            neighbors.emplace_back(south);
+        };
+    }
+    if (w > 0) {
+        Cell west(w - 1, h);
+        if (!m_occupied[west]) {
+            neighbors.emplace_back(west);
+        };
+    }
+    if (w < (GRID_WIDTH - 1)) {
+        Cell east(w + 1, h);
+        if (!m_occupied[east]) {
+            neighbors.emplace_back(east);
+        };
+    }
+
+    // Pick one at random, then add the new connection. It must not already exist.
+    if (!neighbors.empty()) {
+        int index = std::rand() % neighbors.size();
+        Cell new_cell = neighbors[index];
+
+        Connection conn(m_current_cell, new_cell);
+        assert(m_connections.find(conn) == m_connections.end());
+        m_connections.insert(conn);
+        m_occupied[new_cell] = true;
+        m_current_cell = new_cell;
     }
 }
 

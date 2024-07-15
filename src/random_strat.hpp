@@ -16,7 +16,7 @@ public:
         return m_occupied;
     }
 
-    const std::vector<Connection>& getConnections() {
+    const std::set<Connection>& getConnections() {
         return m_connections;
     }
 
@@ -25,5 +25,6 @@ private:
     Cell m_end_goal_cell;
 
     std::map<Cell, bool> m_occupied;
-    std::vector<Connection> m_connections;
+    std::set<Connection> m_connections;
+    std::vector<Cell> m_walk_stack;
 };

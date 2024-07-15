@@ -5,8 +5,10 @@
 #include <cstdint>
 #include <map>
 #include <vector>
+#include <set>
 #include <cassert>
 #include <algorithm>
+#include <random>
 
 #include "CImg.h"
 
@@ -57,7 +59,7 @@ struct Cell
         return *this;
     }
 
-    // Needed for set hashing. Note the need for "const" here!
+    // Needed for hashing. Note the need for "const" here!
     bool operator<(const Cell &that) const
     {
         if      (w < that.w) return true;
@@ -65,6 +67,12 @@ struct Cell
         else if (h < that.h) return true;
         else if (h > that.h) return false;
         else return false; // Must be equal.
+    }
+
+    bool operator>(const Cell &that) const
+    {
+        bool less_than = *this < that;
+        return !less_than;
     }
 
     int w;
@@ -80,6 +88,8 @@ struct Connection
     Connection(const Cell& pbegin, const Cell &pend) :
         begin(pbegin), end(pend)
     {
+        printf("Connection from (%d, %d) to (%d, %d)\n", begin.w, begin.h, end.w, end.h);
+
         // Bounds check.
         assert((begin.w >= 0) && (begin.w < GRID_WIDTH));
         assert((begin.h >= 0) && (begin.h < GRID_HEIGHT));
@@ -94,6 +104,16 @@ struct Connection
         begin(that.begin), end(that.end)
     {}
 
+    // Needed for hashing. Note the need for "const" here!
+    bool operator<(const Connection &that) const
+    {
+        if      (begin < that.begin) return true;
+        else if (begin > that.begin) return false;
+        else if (end < that.end) return true;
+        else if (end > that.end) return false;
+        else return false; // Must be equal.
+    }
+
     Cell begin;
     Cell end;
 };
@@ -105,7 +125,7 @@ class IMazeStrategy
     virtual void nextStep() = 0;
     virtual const Cell& getCurrentCell() = 0;
     virtual const std::map<Cell, bool>& getCells() = 0;
-    virtual const std::vector<Connection>& getConnections() = 0;
+    virtual const std::set<Connection>& getConnections() = 0;
 };
 
 #endif

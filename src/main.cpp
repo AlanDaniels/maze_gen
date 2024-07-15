@@ -14,6 +14,10 @@ ScreenCoord calc_offset(int w, int h)
 // And away we go.
 int main()
 {
+    // Choose a random seed.
+    // std::srand(std::time(0));
+
+    // Fire up the display.
     cimg_library::CImg<uint8_t> image(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_DEPTH, NUM_CHANNELS, INITIAL_VALUE);
     cimg_library::CImgDisplay display(image, "Maze Generating");
     RandomStrategy strategy;
@@ -62,7 +66,7 @@ int main()
             display.wait();
             first_draw = true;
         } else {
-            display.wait(1000);
+            display.wait(500);
         }
 
         image.display(display);
