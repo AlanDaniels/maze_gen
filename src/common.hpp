@@ -14,11 +14,11 @@
 
 
 // Constants.
-constexpr int GRID_WIDTH = 17;
-constexpr int GRID_HEIGHT = 15;
-constexpr int CELL_SIZE_PIX = 50;
-constexpr int CELL_BORDER_PIX = 10;
-constexpr int OUTER_BORDER_PIX = 25;
+constexpr int GRID_WIDTH = 35;
+constexpr int GRID_HEIGHT = 23;
+constexpr int CELL_SIZE_PIX = 30;
+constexpr int CELL_BORDER_PIX = 5;
+constexpr int OUTER_BORDER_PIX = 20;
 constexpr int SQUISH_PIX = 10;
 
 constexpr unsigned int SCREEN_WIDTH = 

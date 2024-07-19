@@ -66,7 +66,7 @@ int main()
             display.wait();
             first_draw = true;
         } else {
-            display.wait(250);
+            display.wait(25);
         }
 
         image.display(display);
