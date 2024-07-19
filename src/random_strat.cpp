@@ -32,8 +32,8 @@ const Cell RandomStrategy::getCurrentCell()
 }
 
 
-// Actually do the random walk.
-void RandomStrategy::nextStep()
+// Get the unoccupied neighbors of a cell.
+std::vector<Cell> RandomStrategy::getUnoccupiedNeighbors()
 {
     // Find our possible neighbors.
     Cell current = getCurrentCell();
@@ -67,32 +67,44 @@ void RandomStrategy::nextStep()
         };
     }
 
-    // If we're at a dead end, walk backwards.
-    if (neighbors.empty()) {
-        if (!m_walk_stack.empty()) {
-            m_walk_stack.pop_back();
+    return neighbors;
+}
+
+
+// Actually do the random walk.
+void RandomStrategy::nextStep()
+{
+    std::vector<Cell> neighbors = getUnoccupiedNeighbors();
+
+    // If we're at a dead end, walk backwards and try again.
+    // But, if there's no where left to go, we're done.
+    while (neighbors.empty()) {
+        // If there's no where left to go, we're done.
+        if (m_walk_stack.empty()) {
+            return;
         }
+        m_walk_stack.pop_back();
+        neighbors = getUnoccupiedNeighbors();
     }
 
-    // Otherwise, pick a neighbor at random, then add the new connection. It must not already exist.
-    else {
-        int which = std::rand() % neighbors.size();
-        Cell new_cell = neighbors[which];
-        Connection conn(current, new_cell);
+    // Otherwise, pick a neighbor at random, then add the new connection.
+    Cell current = getCurrentCell();
+    int which = std::rand() % neighbors.size();
+    Cell new_cell = neighbors[which];
+    Connection conn(current, new_cell);
 
-        //  The new connection shouldn't exist.
-        if (m_connections.find(conn) == m_connections.end()) {
-            printf(
-                "Connection from (%d, %d) to (%d, %d)\n",
-                current.w, current.h, new_cell.w, new_cell.h);
-        } else {
-            printf(
-                "HUH?! There's already a connection from (%d, %d) to (%d, %d)\n",
-                current.w, current.h, new_cell.w, new_cell.h);
-        }
-
-        m_connections.insert(conn);
-        m_walk_stack.emplace_back(new_cell);
-        m_occupied[new_cell] = true;
+    //  The new connection shouldn't exist.
+    if (m_connections.find(conn) == m_connections.end()) {
+        printf(
+            "Connection from (%d, %d) to (%d, %d)\n",
+            current.w, current.h, new_cell.w, new_cell.h);
+    } else {
+        printf(
+            "HUH?! There's already a connection from (%d, %d) to (%d, %d)\n",
+            current.w, current.h, new_cell.w, new_cell.h);
     }
+
+    m_connections.insert(conn);
+    m_walk_stack.emplace_back(new_cell);
+    m_occupied[new_cell] = true;
 }

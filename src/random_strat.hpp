@@ -22,6 +22,8 @@ public:
     }
 
 private:
+    std::vector<Cell> getUnoccupiedNeighbors();
+
     std::map<Cell, bool> m_occupied;
     std::set<Connection> m_connections;
     std::vector<Cell> m_walk_stack;
