@@ -78,11 +78,20 @@ void RandomStrategy::nextStep()
     else {
         int which = std::rand() % neighbors.size();
         Cell new_cell = neighbors[which];
-
         Connection conn(current, new_cell);
-        assert((m_connections.find(conn) == m_connections.end(), "Connection already exists"));
-        m_connections.insert(conn);
 
+        //  The new connection shouldn't exist.
+        if (m_connections.find(conn) == m_connections.end()) {
+            printf(
+                "Connection from (%d, %d) to (%d, %d)\n",
+                current.w, current.h, new_cell.w, new_cell.h);
+        } else {
+            printf(
+                "HUH?! There's already a connection from (%d, %d) to (%d, %d)\n",
+                current.w, current.h, new_cell.w, new_cell.h);
+        }
+
+        m_connections.insert(conn);
         m_walk_stack.emplace_back(new_cell);
         m_occupied[new_cell] = true;
     }

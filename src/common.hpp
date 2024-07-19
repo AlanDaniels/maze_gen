@@ -14,8 +14,8 @@
 
 
 // Constants.
-constexpr int GRID_WIDTH = 5;
-constexpr int GRID_HEIGHT = 3;
+constexpr int GRID_WIDTH = 17;
+constexpr int GRID_HEIGHT = 15;
 constexpr int CELL_SIZE_PIX = 50;
 constexpr int CELL_BORDER_PIX = 10;
 constexpr int OUTER_BORDER_PIX = 25;
@@ -71,8 +71,11 @@ struct Cell
 
     bool operator>(const Cell &that) const
     {
-        bool less_than = *this < that;
-        return !less_than;
+        if      (w > that.w) return true;
+        else if (w < that.w) return false;
+        else if (h > that.h) return true;
+        else if (h < that.h) return false;
+        else return false; // Must be equal.
     }
 
     int w;
@@ -88,7 +91,10 @@ struct Connection
     Connection(const Cell& pbegin, const Cell &pend) :
         begin(pbegin), end(pend)
     {
-        printf("Connection from (%d, %d) to (%d, %d)\n", begin.w, begin.h, end.w, end.h);
+        // Maintain a consisten order.
+        if (begin > end) {
+            std::swap(begin, end);
+        }
 
         // Bounds check.
         assert((begin.w >= 0) && (begin.w < GRID_WIDTH));
@@ -97,7 +103,8 @@ struct Connection
         assert((end.h >= 0) && (end.h < GRID_HEIGHT));
 
         // Connections should only span between two adjacent cells.
-        assert((abs(begin.w - end.w) + abs(begin.h - end.h)) == 1);
+        int span = abs(begin.w - end.w) + abs(begin.h - end.h);
+        assert(span == 1);
     }
 
     Connection(const Connection &that) :
@@ -109,8 +116,8 @@ struct Connection
     {
         if      (begin < that.begin) return true;
         else if (begin > that.begin) return false;
-        else if (end < that.end) return true;
-        else if (end > that.end) return false;
+        else if (end   < that.end)   return true;
+        else if (end   < that.end)   return false;
         else return false; // Must be equal.
     }
 
