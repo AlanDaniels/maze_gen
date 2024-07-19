@@ -14,8 +14,8 @@
 
 
 // Constants.
-constexpr int GRID_WIDTH = 21;
-constexpr int GRID_HEIGHT = 15;
+constexpr int GRID_WIDTH = 5;
+constexpr int GRID_HEIGHT = 3;
 constexpr int CELL_SIZE_PIX = 50;
 constexpr int CELL_BORDER_PIX = 10;
 constexpr int OUTER_BORDER_PIX = 25;
@@ -123,7 +123,7 @@ struct Connection
 class IMazeStrategy
 {
     virtual void nextStep() = 0;
-    virtual const Cell& getCurrentCell() = 0;
+    virtual const Cell getCurrentCell() = 0;
     virtual const std::map<Cell, bool>& getCells() = 0;
     virtual const std::set<Connection>& getConnections() = 0;
 };

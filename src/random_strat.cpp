@@ -3,31 +3,44 @@
 
 
 // Default constructor.
-// Start at the top of the screen, aim for the bottom.
+// Start at the top of the screen.
 RandomStrategy::RandomStrategy()
 {
-    int middle = (GRID_WIDTH / 2);
-    m_current_cell  = Cell(middle, 0);
-    m_end_goal_cell = Cell(middle, GRID_HEIGHT - 1);
-
     for (int w = 0; w < GRID_WIDTH; w++) {
         for (int h = 0; h < GRID_HEIGHT; h++) {
             m_occupied.emplace(Cell(w, h), false);
         }
     }
-    m_occupied[m_current_cell] = true;
-    m_walk_stack.emplace_back(m_current_cell);
+
+    Cell starter = getCurrentCell();
+    m_occupied[starter] = true;
+    m_walk_stack.emplace_back(starter);
 }
 
 
-// A bit of junk code, just to see if the steps work.
-// TODO: Actually do the random walk.
+// Get the current cell.
+const Cell RandomStrategy::getCurrentCell()
+{
+    // If our stack is exhausted, start at the top of the grid.
+    if (m_walk_stack.empty()) {
+        int middle = (GRID_WIDTH / 2);
+        return Cell(middle, 0);
+    // Otherwise it's the top of the stack.
+    } else {
+        return m_walk_stack[m_walk_stack.size() - 1];
+    }
+}
+
+
+// Actually do the random walk.
 void RandomStrategy::nextStep()
 {
     // Find our possible neighbors.
+    Cell current = getCurrentCell();
+    
     std::vector<Cell> neighbors;
-    int h = m_current_cell.h;
-    int w = m_current_cell.w;
+    int h = current.h;
+    int w = current.w;
 
     if (h > 0) {
         Cell north(w, h - 1);
@@ -54,22 +67,23 @@ void RandomStrategy::nextStep()
         };
     }
 
-    // Pick one at random, then add the new connection. It must not already exist.
-    if (!neighbors.empty()) {
-        int index = std::rand() % neighbors.size();
-        Cell new_cell = neighbors[index];
-
-        Connection conn(m_current_cell, new_cell);
-        assert(m_connections.find(conn) == m_connections.end());
-        m_connections.insert(conn);
-        m_occupied[new_cell] = true;
-        m_current_cell = new_cell;
+    // If we're at a dead end, walk backwards.
+    if (neighbors.empty()) {
+        if (!m_walk_stack.empty()) {
+            m_walk_stack.pop_back();
+        }
     }
-}
 
+    // Otherwise, pick a neighbor at random, then add the new connection. It must not already exist.
+    else {
+        int which = std::rand() % neighbors.size();
+        Cell new_cell = neighbors[which];
 
-// Just return a random spot.
-const Cell &RandomStrategy::getCurrentCell()
-{
-    return m_current_cell;
+        Connection conn(current, new_cell);
+        assert((m_connections.find(conn) == m_connections.end(), "Connection already exists"));
+        m_connections.insert(conn);
+
+        m_walk_stack.emplace_back(new_cell);
+        m_occupied[new_cell] = true;
+    }
 }
