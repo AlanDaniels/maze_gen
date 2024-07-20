@@ -59,23 +59,23 @@ struct Cell
         return *this;
     }
 
-    // Needed for hashing. Note the need for "const" here!
+    // Operators needed for hashing.
+    bool operator==(const Cell &that) const
+    {
+        bool result = (w == that.w) && (h == that.h);
+        return result;
+    }
+
     bool operator<(const Cell &that) const
     {
-        if      (w < that.w) return true;
-        else if (w > that.w) return false;
-        else if (h < that.h) return true;
-        else if (h > that.h) return false;
-        else return false; // Must be equal.
+        bool result = (w < that.w) || ((w == that.w) && (h < that.h));
+        return result;
     }
 
     bool operator>(const Cell &that) const
     {
-        if      (w > that.w) return true;
-        else if (w < that.w) return false;
-        else if (h > that.h) return true;
-        else if (h < that.h) return false;
-        else return false; // Must be equal.
+        bool result = (w > that.w) || ((w == that.w) && (h > that.h));
+        return result;
     }
 
     int w;
@@ -114,11 +114,8 @@ struct Connection
     // Needed for hashing. Note the need for "const" here!
     bool operator<(const Connection &that) const
     {
-        if      (begin < that.begin) return true;
-        else if (begin > that.begin) return false;
-        else if (end   < that.end)   return true;
-        else if (end   < that.end)   return false;
-        else return false; // Must be equal.
+        bool result = (begin < that.begin) || ((begin == that.begin) && (end < that.end));
+        return result;
     }
 
     Cell begin;
